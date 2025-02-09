@@ -1,14 +1,14 @@
 #!/bin/bash
 
 # Install dependencies
-echo "Installing MySQL and dependencies..."
+echo "Installing MariaDB and dependencies..."
 
-# Install MySQL server
+# Install MariaDB server
 apt-get update
-apt-get install -y mysql-server
+apt-get install -y mariadb-server
 
-# Start MySQL service
-service mysql start
+# Start MariaDB service
+service mariadb start
 
 # Install Node.js dependencies
 npm install
