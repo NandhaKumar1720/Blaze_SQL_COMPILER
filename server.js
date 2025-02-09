@@ -1,7 +1,7 @@
 const express = require("express");
 const bodyParser = require("body-parser");
 const { Worker } = require("worker_threads");
-const mysql = require("mysql2/promise");
+const mariadb = require("mariadb");
 const cors = require("cors");
 const os = require("os");
 
@@ -10,7 +10,7 @@ const port = 3000;
 const maxWorkers = os.cpus().length;
 const workerPool = [];
 
-// MySQL Root Credentials
+// MariaDB Root Credentials
 const ROOT_USER = "root";
 const ROOT_PASSWORD = "rootpassword";  // Change as needed
 const HOST = "localhost";
@@ -21,7 +21,7 @@ app.use(bodyParser.json());
 
 // Create separate database for each user
 async function getUserDatabase(userId) {
-    const connection = await mysql.createConnection({
+    const connection = await mariadb.createConnection({
         host: HOST,
         user: ROOT_USER,
         password: ROOT_PASSWORD,
@@ -35,7 +35,7 @@ async function getUserDatabase(userId) {
 
 // Reuse workers
 function getWorker() {
-    return workerPool.length ? workerPool.pop() : new Worker("./mysql-worker.js");
+    return workerPool.length ? workerPool.pop() : new Worker("./mariadb-worker.js");
 }
 
 // SQL execution endpoint
