@@ -1,8 +1,8 @@
 # Use a lightweight Node.js image
 FROM node:16-slim
 
-# Install MySQL client
-RUN apt-get update && apt-get install -y default-mysql-client && rm -rf /var/lib/apt/lists/*
+# Install MySQL server
+RUN apt-get update && apt-get install -y mysql-server && rm -rf /var/lib/apt/lists/*
 
 # Set working directory
 WORKDIR /app
