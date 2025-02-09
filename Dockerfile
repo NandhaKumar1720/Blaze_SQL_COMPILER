@@ -1,10 +1,7 @@
 # Use a lightweight Node.js image
 FROM node:16-slim
 
-# Install required dependencies
-RUN apt-get update && apt-get install -y wget gnupg lsb-release
-
-# Install MariaDB instead of MySQL
+# Install MariaDB server
 RUN apt-get update && apt-get install -y mariadb-server && rm -rf /var/lib/apt/lists/*
 
 # Set working directory
