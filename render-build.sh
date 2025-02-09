@@ -1,11 +1,14 @@
 #!/bin/bash
 
-# Install dependencies for MySQL and Node.js
-echo "Installing dependencies..."
+# Install dependencies
+echo "Installing MySQL and dependencies..."
 
-# Install MySQL client
+# Install MySQL server
 apt-get update
-apt-get install -y default-mysql-client build-essential
+apt-get install -y mysql-server
+
+# Start MySQL service
+service mysql start
 
 # Install Node.js dependencies
 npm install
