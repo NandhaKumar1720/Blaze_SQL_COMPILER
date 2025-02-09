@@ -1,30 +1,29 @@
 const { parentPort } = require("worker_threads");
-const mariadb = require("mariadb");
+const mysql = require("mysql2/promise");
 
-// MariaDB root credentials
-const ROOT_USER = "root";
-const ROOT_PASSWORD = "rootpassword";  // Change this as needed
-const HOST = "localhost";
+parentPort.on("message", async ({ query, dbName }) => {
+    if (!query) {
+        return parentPort.postMessage({ error: "No query provided!" });
+    }
 
-parentPort.on("message", async ({ database, query }) => {
-    let connection;
+    const connection = await mysql.createConnection({
+        host: process.env.DB_HOST,
+        user: process.env.DB_USER,
+        password: process.env.DB_PASS,
+        database: dbName,
+        port: 3306
+    });
+
     try {
-        // Connect to MariaDB
-        connection = await mariadb.createConnection({
-            host: HOST,
-            user: ROOT_USER,
-            password: ROOT_PASSWORD,
-            database,
-        });
+        const [rows] = await connection.execute(query);
 
-        // Execute SQL query
-        const results = await connection.query(query);
-        
-        // Send result back
-        parentPort.postMessage({ output: JSON.stringify(results, null, 2) });
+        // Delete the temporary database after execution
+        await connection.execute(`DROP DATABASE IF EXISTS ${dbName}`);
+
+        parentPort.postMessage({ output: rows });
     } catch (err) {
-        parentPort.postMessage({ error: { fullError: `SQL Error: ${err.message}` } });
+        parentPort.postMessage({ error: `Query Execution Error: ${err.message}` });
     } finally {
-        if (connection) await connection.end();
+        await connection.end();
     }
 });
