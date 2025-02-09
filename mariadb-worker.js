@@ -1,7 +1,7 @@
 const { parentPort } = require("worker_threads");
-const mysql = require("mysql2/promise");
+const mariadb = require("mariadb");
 
-// MySQL root credentials
+// MariaDB root credentials
 const ROOT_USER = "root";
 const ROOT_PASSWORD = "rootpassword";  // Change this as needed
 const HOST = "localhost";
@@ -9,8 +9,8 @@ const HOST = "localhost";
 parentPort.on("message", async ({ database, query }) => {
     let connection;
     try {
-        // Connect to MySQL
-        connection = await mysql.createConnection({
+        // Connect to MariaDB
+        connection = await mariadb.createConnection({
             host: HOST,
             user: ROOT_USER,
             password: ROOT_PASSWORD,
@@ -18,7 +18,7 @@ parentPort.on("message", async ({ database, query }) => {
         });
 
         // Execute SQL query
-        const [results] = await connection.execute(query);
+        const results = await connection.query(query);
         
         // Send result back
         parentPort.postMessage({ output: JSON.stringify(results, null, 2) });
